@@ -22,3 +22,6 @@ variable "vm_size" {
   default = "Standard_D2d_v4"
 }
 
+variable "app_insights_conn_string" {
+  type = string
+}

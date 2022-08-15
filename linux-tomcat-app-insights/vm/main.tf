@@ -34,43 +34,43 @@ resource "azurerm_network_interface" "tomcat_vm" {
   }
 }
 
-resource "azurerm_network_security_group" "ssh" {
+resource "azurerm_network_security_group" "tomcat" {
   # Workaround https://github.com/hashicorp/terraform/issues/24663
   depends_on = [
     azurerm_network_interface.tomcat_vm,
   ]
-  name                = "nsg-ssh"
+  name                = "nsg-tomcat"
   resource_group_name = var.rg_name
   location            = var.location
 
   security_rule {
-    name                       = "ssh"
+    name                       = "tomcat"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "22"
+    destination_port_range     = "8080"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
 }
 
-resource "azurerm_network_interface_security_group_association" "nic_ssh" {
+resource "azurerm_network_interface_security_group_association" "nic_tomcat" {
   # Workaround https://github.com/hashicorp/terraform/issues/24663
   depends_on = [
     azurerm_network_interface.tomcat_vm,
-    azurerm_network_security_group.ssh
+    azurerm_network_security_group.tomcat
   ]
   network_interface_id      = azurerm_network_interface.tomcat_vm.id
-  network_security_group_id = azurerm_network_security_group.ssh.id
+  network_security_group_id = azurerm_network_security_group.tomcat.id
 }
 
 resource "azurerm_linux_virtual_machine" "tomcat_vm" {
   # Workaround https://github.com/hashicorp/terraform/issues/24663
   depends_on = [
     azurerm_network_interface.tomcat_vm,
-    azurerm_network_interface_security_group_association.nic_ssh
+    azurerm_network_interface_security_group_association.nic_tomcat
   ]
   name                            = "vm-tomcat-${var.vm_suffix}"
   resource_group_name             = var.rg_name
@@ -99,13 +99,11 @@ resource "azurerm_linux_virtual_machine" "tomcat_vm" {
   }
 
   source_image_reference {
-    publisher = "canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts-gen2"
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
     version   = "latest"
   }
-
-  custom_data = filebase64("./vm/init.sh")
 }
 
 resource "azurerm_virtual_machine_extension" "ama" {
@@ -122,6 +120,23 @@ resource "azurerm_virtual_machine_extension" "ama" {
         "dummy": "dummy"
     }
 SETTINGS
+}
+
+resource "azurerm_virtual_machine_extension" "vmext" {
+  name                = "${azurerm_linux_virtual_machine.tomcat_vm.name}-vmext"
+  depends_on = [
+    azurerm_virtual_machine_extension.ama
+  ]
+  virtual_machine_id  = azurerm_linux_virtual_machine.tomcat_vm.id
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
+
+  protected_settings = <<PROT
+    {
+        "script": "${base64encode(templatefile("./vm/init.tftpl", {app_insights_conn_string = var.app_insights_conn_string}))}"
+    }
+    PROT
 }
 
 resource "azurerm_subnet" "bastion_subnet" {

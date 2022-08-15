@@ -1,0 +1,17 @@
+#!/bin/bash
+
+sudo apt-get update 
+sudo apt install -y default-jdk
+sudo apt install -y tomcat8 tomcat8-admin tomcat8-examples
+mkdir -p /opt/appInsights
+cd /opt/appInsights
+wget -nc "https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.3.1/applicationinsights-agent-3.3.1.jar"
+
+cat - << EOT > /opt/appInsights/applicationinsights.json
+{
+  "connectionString": "${app_insights_conn_string}"
+}
+EOT
+grep -qxF 'JAVA_OPTS="$JAVA_OPTS -javaagent:/opt/appInsights/applicationinsights-agent-3.3.1.jar"' /etc/default/tomcat8 || echo 'JAVA_OPTS="$JAVA_OPTS -javaagent:/opt/appInsights/applicationinsights-agent-3.3.1.jar"' >> /etc/default/tomcat8
+/etc/init.d/tomcat8 restart
+ufw allow 8080

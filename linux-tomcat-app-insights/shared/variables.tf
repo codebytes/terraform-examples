@@ -16,3 +16,8 @@ variable "suffix" {
   type    = string
   default = "cayers"
 }
+
+variable "action_group_name" {
+  type = string
+  default = "cayers-tomcat-ag"
+}

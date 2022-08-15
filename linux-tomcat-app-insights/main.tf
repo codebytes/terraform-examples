@@ -10,11 +10,12 @@ resource "azurerm_resource_group" "vm_rg" {
 }
 
 module "shared" {
-  source = "./shared"
+  source  = "./shared"
   rg_name = azurerm_resource_group.shared_rg.name
 }
 
 module "vm" {
-  source = "./vm"
-  rg_name = azurerm_resource_group.vm_rg.name
+  source                   = "./vm"
+  rg_name                  = azurerm_resource_group.vm_rg.name
+  app_insights_conn_string = module.shared.app_insights_conn_string
 }
