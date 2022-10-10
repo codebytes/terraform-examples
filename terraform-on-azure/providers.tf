@@ -14,6 +14,5 @@ terraform {
 }
 
 provider "azurerm" {
-  oidc = true
   features {}
 }
