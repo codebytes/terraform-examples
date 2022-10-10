@@ -9,11 +9,7 @@ on:
 permissions:
   id-token: write
   contents: read
-      
-defaults:
-  run:
-    working-directory: terraform-on-azure
-    
+          
 jobs:
   terraform:
     name: 'Terraform'
@@ -24,6 +20,7 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: terraform-on-azure
 
     steps:
     # Checkout the repository to the GitHub Actions runner
