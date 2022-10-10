@@ -26,9 +26,11 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION }}
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      TF_STATE_STORAGEACCT: ${{ secrets.TF_STATE_STORAGEACCT }}
+      TF_STATE_CONTAINER: ${{ secrets.TF_STATE_CONTAINER }}
+      TF_STATE_RG: ${{ secrets.TF_STATE_RG }}
       ARM_USE_OIDC: true
       TF_VAR_ENV: ${job.dev.environment}
-      TF_STATE_CONTAINER: "tfstate${var.env}"
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -43,7 +45,10 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform init -backend-config="container_name=$TF_STATE_CONTAINER"
+      run: terraform init |
+      -backend-config="storage_account_name=$TF_STATE_STORAGEACCT" 
+      -backend-config="container_name=$TF_STATE_CONTAINER" 
+      -backend-config="resource_group_name=$TF_STATE_RG"
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
@@ -76,8 +81,10 @@ jobs:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       ARM_USE_OIDC: true
+      TF_STATE_STORAGEACCT: ${{ secrets.TF_STATE_STORAGEACCT }}
+      TF_STATE_CONTAINER: ${{ secrets.TF_STATE_CONTAINER }}
+      TF_STATE_RG: ${{ secrets.TF_STATE_RG }}
       TF_VAR_ENV: ${job.prod.environment}
-      TF_STATE_CONTAINER: "tfstate${var.env}"
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -92,7 +99,10 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform init -backend-config="container_name=$TF_STATE_CONTAINER"
+      run: terraform init |
+      -backend-config="storage_account_name=$TF_STATE_STORAGEACCT" 
+      -backend-config="container_name=$TF_STATE_CONTAINER" 
+      -backend-config="resource_group_name=$TF_STATE_RG"
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
