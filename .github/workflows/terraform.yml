@@ -27,6 +27,7 @@ jobs:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       ARM_USE_OIDC: true
+      TF_VAR_ENV: ${job.terraform.environment}
 
     steps:
     # Checkout the repository to the GitHub Actions runner
