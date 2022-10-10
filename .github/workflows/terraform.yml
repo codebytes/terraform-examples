@@ -43,6 +43,11 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform init
+      env:
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION }}
+        ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        ARM_USE_OIDC: true
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
