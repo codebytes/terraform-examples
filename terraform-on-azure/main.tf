@@ -4,8 +4,8 @@ resource "azurerm_resource_group" "state-demo-secure" {
   location = var.location
 }
 
-resource "azurerm_storage_account" "example" {
-  name                     = "storageaccountname"
+resource "azurerm_storage_account" "state-demo" {
+  name                     = "statedemocayers${var.env}"
   resource_group_name      = azurerm_resource_group.state-demo-secure.name
   location                 = azurerm_resource_group.state-demo-secure.location
   account_tier             = "Standard"
