@@ -30,7 +30,7 @@ jobs:
       TF_STATE_CONTAINER: ${{ secrets.TF_STATE_CONTAINER }}
       TF_STATE_RG: ${{ secrets.TF_STATE_RG }}
       ARM_USE_OIDC: true
-      TF_VAR_ENV: ${job.dev.environment}
+      TF_VAR_env: ${job.dev.environment}
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -81,7 +81,7 @@ jobs:
       TF_STATE_STORAGEACCT: ${{ secrets.TF_STATE_STORAGEACCT }}
       TF_STATE_CONTAINER: ${{ secrets.TF_STATE_CONTAINER }}
       TF_STATE_RG: ${{ secrets.TF_STATE_RG }}
-      TF_VAR_ENV: ${job.prod.environment}
+      TF_VAR_env: ${job.prod.environment}
 
     steps:
     # Checkout the repository to the GitHub Actions runner
