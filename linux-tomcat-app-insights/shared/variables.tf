@@ -18,6 +18,6 @@ variable "suffix" {
 }
 
 variable "action_group_name" {
-  type = string
+  type    = string
   default = "cayers-tomcat-ag"
 }

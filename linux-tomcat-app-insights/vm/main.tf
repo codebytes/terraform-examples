@@ -123,18 +123,18 @@ SETTINGS
 }
 
 resource "azurerm_virtual_machine_extension" "vmext" {
-  name                = "${azurerm_linux_virtual_machine.tomcat_vm.name}-vmext"
+  name = "${azurerm_linux_virtual_machine.tomcat_vm.name}-vmext"
   depends_on = [
     azurerm_virtual_machine_extension.ama
   ]
-  virtual_machine_id  = azurerm_linux_virtual_machine.tomcat_vm.id
+  virtual_machine_id   = azurerm_linux_virtual_machine.tomcat_vm.id
   publisher            = "Microsoft.Azure.Extensions"
   type                 = "CustomScript"
   type_handler_version = "2.0"
 
   protected_settings = <<PROT
     {
-        "script": "${base64encode(templatefile("./vm/init.tftpl", {app_insights_conn_string = var.app_insights_conn_string}))}"
+        "script": "${base64encode(templatefile("./vm/init.tftpl", { app_insights_conn_string = var.app_insights_conn_string }))}"
     }
     PROT
 }

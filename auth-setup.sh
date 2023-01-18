@@ -17,6 +17,9 @@ az ad app federated-credential create \
    --parameters "{\"name\":\"${githubRepositoryName}-pr\",\"issuer\":\"https://token.actions.githubusercontent.com\",\"subject\":\"repo:${githubOrganizationName}/${githubRepositoryName}:pull_request\",\"audiences\":[\"api://AzureADTokenExchange\"]}"
 az ad app federated-credential create \
    --id $applicationRegistrationObjectId \
+   --parameters "{\"name\":\"${githubRepositoryName}-env-dev\",\"issuer\":\"https://token.actions.githubusercontent.com\",\"subject\":\"repo:${githubOrganizationName}/${githubRepositoryName}:environment:dev\",\"audiences\":[\"api://AzureADTokenExchange\"]}"
+az ad app federated-credential create \
+   --id $applicationRegistrationObjectId \
    --parameters "{\"name\":\"${githubRepositoryName}-env-prod\",\"issuer\":\"https://token.actions.githubusercontent.com\",\"subject\":\"repo:${githubOrganizationName}/${githubRepositoryName}:environment:prod\",\"audiences\":[\"api://AzureADTokenExchange\"]}"
 az ad app federated-credential create \
    --id $applicationRegistrationObjectId \
