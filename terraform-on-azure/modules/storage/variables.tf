@@ -1,10 +1,10 @@
 variable "name" {
-  type = string
+  type        = string
   description = "name of resource"
 }
 
 variable "location" {
-  type = string
+  type        = string
   description = "Location of resources"
-  default = "eastus"
+  default     = "eastus"
 }
