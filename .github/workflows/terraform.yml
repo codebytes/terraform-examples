@@ -11,10 +11,40 @@ permissions:
   contents: read
           
 jobs:
-  dev:
-    name: 'Terraform'
+  dev-state-store:
+    name: 'Dev State Store'
     runs-on: ubuntu-latest
     environment: dev
+
+  env:
+    ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+    ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+    TF_STATE_STORAGEACCT: ${{ secrets.TF_STATE_STORAGEACCT }}
+    TF_STATE_CONTAINER: ${{ secrets.TF_STATE_CONTAINER }}
+    TF_STATE_RG: ${{ secrets.TF_STATE_RG }}
+
+  steps:
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az group create --name $TF_STATE_RG --location eastus
+          az storage account create --resource-group $TF_STATE_RG --name $TF_STATE_STORAGEACCT --sku Standard_LRS --encryption-services blob
+          az storage container create --name $TF_STATE_CONTAINER --account-name $TF_STATE_STORAGEACCT
+
+  dev:
+    name: 'Dev Terraform'
+    runs-on: ubuntu-latest
+    environment: dev
+    needs: dev-state-store
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -36,21 +66,6 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
-
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  
-    - name: Azure CLI script
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          az group create --name $TF_STATE_RG --location eastus
-          az storage account create --resource-group $TF_STATE_RG --name $TF_STATE_STORAGEACCT --sku Standard_LRS --encryption-services blob
-          az storage container create --name $TF_STATE_CONTAINER --account-name $TF_STATE_STORAGEACCT
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
