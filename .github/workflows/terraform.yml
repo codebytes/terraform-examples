@@ -20,7 +20,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: terraform-on-azure
+        working-directory: terraform-on-azure/dev
 
     env:
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION }}
@@ -71,7 +71,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: terraform-on-azure
+        working-directory: terraform-on-azure/prod
 
     env:
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION }}
