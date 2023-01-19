@@ -37,8 +37,18 @@ jobs:
         with:
           inlineScript: |
             az group create --name $TF_STATE_RG --location eastus
-            az storage account create --resource-group $TF_STATE_RG --name $TF_STATE_STORAGEACCT --sku Standard_LRS --encryption-services blob
-            az storage container create --name $TF_STATE_CONTAINER --account-name $TF_STATE_STORAGEACCT
+            az storage account create --resource-group $TF_STATE_RG \
+              --name $TF_STATE_STORAGEACCT \
+              --sku Standard_LRS \ 
+              --encryption-services blob
+            az storage container create \
+              --name $TF_STATE_CONTAINER \
+              --account-name $TF_STATE_STORAGEACCT
+            az lock create --name DeleteLock \
+              --resource-group $TF_STATE_RG \
+              --resource TF_STATE_STORAGEACCT \
+              --lock-type CanNotDelete \
+              --resource-type Microsoft.Storage/storageAccounts
 
   dev:
     name: 'Dev Terraform'
@@ -161,7 +171,12 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform init -backend-config="storage_account_name=$TF_STATE_STORAGEACCT" -backend-config="container_name=$TF_STATE_CONTAINER" -backend-config="resource_group_name=$TF_STATE_RG" -backend-config="key=$TF_VAR_environment.terraform.tfstate"
+      run: |
+        terraform init \
+          -backend-config="storage_account_name=$TF_STATE_STORAGEACCT" \
+          -backend-config="container_name=$TF_STATE_CONTAINER" \
+          -backend-config="resource_group_name=$TF_STATE_RG" \
+          -backend-config="key=$TF_VAR_environment.terraform.tfstate"
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
