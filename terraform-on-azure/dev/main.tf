@@ -18,5 +18,4 @@ provider "azurerm" {
 resource "azurerm_resource_group" "rg" {
   name     = "terraform-demo-${var.environment}"
   location = var.location
-
 }
