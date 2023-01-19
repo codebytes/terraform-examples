@@ -24,7 +24,8 @@ jobs:
         sudo install terrascan /usr/local/bin    
     - name: Run Terrascan
       run: |
-        terrascan scan -o junit-xml -i terraform > report.xml
+        terrascan init
+        terrascan scan -v -o junit-xml -i terraform > report.xml
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
