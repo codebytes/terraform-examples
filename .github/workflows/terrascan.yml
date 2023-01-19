@@ -19,7 +19,7 @@ jobs:
     - uses: hashicorp/setup-terraform@v2
     - name: Run Terrascan
       run: |
-        docker run --rm -it -v "$(pwd):/iac" -w /iac tenable/terrascan scan -v -o junit-xml -i terraform > report.xml
+        docker run --rm -v "$(pwd):/iac" -w /iac tenable/terrascan scan -v -o junit-xml -i terraform > report.xml
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
