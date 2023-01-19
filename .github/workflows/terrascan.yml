@@ -1,4 +1,5 @@
 name: terrascan
+on:
   push:
     branches:
       - main
