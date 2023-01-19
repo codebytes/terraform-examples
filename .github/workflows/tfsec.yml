@@ -4,7 +4,7 @@ on:
     branches:
       - main
   pull_request:
-  
+
 jobs:
   tfsec:
     name: tfsec
@@ -17,7 +17,7 @@ jobs:
         uses: aquasecurity/tfsec-action@v1.0.0
         with:
           format: junit
-          additional_args: -O results.xml
+          additional_args: -O results.xml --include-passed --include-ignored
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
