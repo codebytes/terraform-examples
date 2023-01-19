@@ -39,7 +39,7 @@ jobs:
             az group create --name $TF_STATE_RG --location eastus
             az storage account create --resource-group $TF_STATE_RG --name $TF_STATE_STORAGEACCT --sku Standard_LRS --encryption-services blob
             az storage container create --name $TF_STATE_CONTAINER --account-name $TF_STATE_STORAGEACCT
-            az lock create --name DeleteLock --resource-group $TF_STATE_RG --resource TF_STATE_STORAGEACCT --lock-type CanNotDelete --resource-type Microsoft.Storage/storageAccounts
+            az lock create --name DeleteLock --resource-group $TF_STATE_RG --resource $TF_STATE_STORAGEACCT --lock-type CanNotDelete --resource-type Microsoft.Storage/storageAccounts
 
   dev:
     name: 'Dev Terraform'
