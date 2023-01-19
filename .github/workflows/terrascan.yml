@@ -16,33 +16,22 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    - uses: hashicorp/setup-terraform@v2
     - name: Run Terrascan
-      run: |
-        docker run --rm -v "$(pwd):/iac" -w /iac tenable/terrascan scan -v -o junit-xml -i terraform > report.xml
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
+      id: terrascan
+      uses: tenable/terrascan-action@main
       with:
-        junit_files: "results.xml"
-        check_name: "Terrascan Results"
-
-    # - name: Run Terrascan
-    #   id: terrascan
-    #   uses: tenable/terrascan-action@main
-    #   with:
-    #     iac_type: 'terraform'
-    #     #iac_version: 'v14'
-    #     policy_type: 'azure'
-    #     only_warn: false
-    #     #scm_token: ${{ secrets.ACCESS_TOKEN }}
-    #     #verbose: true
-    #     #sarif_upload: true
-    #     #non_recursive:
-    #     #iac_dir: demos
-    #     #policy_path:
-    #     #skip_rules:
-    #     #config_path:
-    #     #find_vulnerabilities:
-    #     #webhook_url:
-    #     #webhook_token:
+        iac_type: 'terraform'
+        #iac_version: 'v14'
+        #policy_type: 'azure'
+        only_warn: false
+        #scm_token: ${{ secrets.ACCESS_TOKEN }}
+        verbose: true
+        sarif_upload: true
+        #non_recursive:
+        #iac_dir: demos
+        #policy_path:
+        #skip_rules:
+        #config_path:
+        #find_vulnerabilities:
+        #webhook_url:
+        #webhook_token:
