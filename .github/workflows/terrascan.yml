@@ -17,15 +17,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     - uses: hashicorp/setup-terraform@v2
-    - name: Install Terrascan
-      run: |
-        curl --location https://github.com/tenable/terrascan/releases/download/v1.17.1/terrascan_1.17.1_Linux_x86_64.tar.gz --output terrascan.tar.gz
-        tar -xvf terrascan.tar.gz
-        sudo install terrascan /usr/local/bin    
     - name: Run Terrascan
       run: |
-        terrascan init
-        terrascan scan -v -o junit-xml -i terraform > report.xml
+        docker run --rm -it -v "$(pwd):/iac" -w /iac tenable/terrascan scan -v -o junit-xml -i terraform > report.xml
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
