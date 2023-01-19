@@ -5,6 +5,10 @@ on:
       - main
   pull_request:
 
+permissions:
+  checks: write
+  pull-requests: write
+
 jobs:
   tfsec:
     name: tfsec
@@ -23,3 +27,4 @@ jobs:
         if: always()
         with:
           junit_files: "results.xml"
+          check_name: "tfsec Results"

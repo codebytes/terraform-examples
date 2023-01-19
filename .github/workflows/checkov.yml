@@ -5,6 +5,10 @@ on:
       - main
   pull_request:
 
+permissions:
+  checks: write
+  pull-requests: write
+
 jobs:
   checkov-job:
     runs-on: ubuntu-latest
@@ -37,3 +41,4 @@ jobs:
         if: always()
         with:
           junit_files: "reports/**/*.xml"
+          check_name: "checkov Results"
